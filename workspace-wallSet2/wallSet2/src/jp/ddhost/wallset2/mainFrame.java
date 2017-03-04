@@ -24,7 +24,7 @@ public class mainFrame extends JFrame
 {
 	Container contentPane;//このフレームのContentPane
 
-	static String imagePath = "C:\\Users\\_\\Documents\\PHOTOS\\DSC_0260.JPG";
+	static String imagePath = "C:\\Users\\_\\Documents\\PHOTOS\\wallpaper2.jpg";
 
 	public static void main(String[] args) throws Exception
 	{
@@ -45,7 +45,7 @@ public class mainFrame extends JFrame
 			// タスクトレイアイコンを生成
 	        Image image = ImageIO.read(
 	                getClass().getResourceAsStream("trayicon.png"));
-	        final TrayIcon icon = new TrayIcon(image,"WALL SETTER");
+	        final TrayIcon icon = new TrayIcon(image,"WALL CALENDAR");
 
 
 	        // ポップアップメニューを生成
@@ -98,15 +98,7 @@ public class mainFrame extends JFrame
 		//フレームの枠を外す
 		this.setUndecorated(true);
 
-		//カレンダーを表示する
-		dispCalendar();
 
-		//白い箱の表示
-		JLabel calendarBox = new JLabel();
-		calendarBox.setOpaque(true);
-		calendarBox.setBackground(new Color(255,255,255,125));
-		calendarBox.setBounds(10,10,220,220);
-		contentPane.add(calendarBox);
 
 
 		//画像表示用ImageIcon
@@ -122,9 +114,6 @@ public class mainFrame extends JFrame
 		imageLabel.setBounds(0,0,width,height);
 		imageLabel.setVerticalAlignment(JLabel.CENTER);
 
-		// contentPaneに画像表示用JLabelを追加
-		contentPane.add(imageLabel);
-
 		//ウィンドウのサイズと位置を調整
 		Dimension d = Toolkit.getDefaultToolkit().getScreenSize(); //ディスプレイサイズ
 		int x = (d.width - width);	//フレームのX座標
@@ -132,25 +121,36 @@ public class mainFrame extends JFrame
 		this.setBounds(x, y, width, height);
 
 
+		//カレンダー表示のX,Y座標
+		int xOffset = width-250;
+
+		int yOffset = 10;
+		if(d.height < height){
+			yOffset = (height - d.height)/2 + 10;
+		}
+
+		//カレンダーを表示する
+		dispCalendar(xOffset,yOffset);
+		dispCalendarNext(xOffset,yOffset + 260);
 
 
 
 
+
+		// contentPaneに画像表示用JLabelを追加
+		contentPane.add(imageLabel);
 
 		//フレームを表示させる。
 		this.setVisible(true);
 
 		//フレームを最背面に送る
 		this.toBack();
-
-
 	}
 
 
 
-	private void dispCalendar(){
-		String[] weekName = {"Sun", "Mon", "Tue", "Wed",
-                "Thu", "Fri", "Sat"};
+	//　当月のカレンダーを表示
+	private void dispCalendar(int xBaseOffset,int yBaseOffset){
 
 		Calendar myCalendar = Calendar.getInstance();
 
@@ -158,38 +158,43 @@ public class mainFrame extends JFrame
 		int year = myCalendar.get(Calendar.YEAR);	//年
 		int month = myCalendar.get(Calendar.MONTH) + 1;	//月
 		int day = myCalendar.get(Calendar.DATE);	//日
-		int week = myCalendar.get(Calendar.DAY_OF_WEEK) - 1;//曜日(番号)
 		int days = myCalendar.getActualMaximum(Calendar.DAY_OF_MONTH);//月の日数
 
-
-		//System.out.println(year + "年" + month + "月" + day + "日");
-		//System.out.println("(" + week_name[week] + ")");
-		//System.out.println(hour + "時" + minute + "分" + second + "秒");
-
+		// 各列ごとのX座標
 		int[] xOffsets = {20,50,80,110,140,170,200};
-		int[] yOffsets = {80,110,140,170,200,230,260,290};
+		for(int j=0;j<xOffsets.length;j++){
+			xOffsets[j] += xBaseOffset;
+		}
+		// 各行ごとのY座標
+		int[] yOffsets = {10,40,70,100,130,160,190,220};
+		for(int j=0;j<yOffsets.length;j++){
+			yOffsets[j] += yBaseOffset;
+		}
 
-		createLabel(year + "/" + month,Color.black,20,20);
-		createLabel("Sun",Color.red,xOffsets[0],50);
-		createLabel("Mon",Color.black,xOffsets[1],50);
-		createLabel("Tue",Color.black,xOffsets[2],50);
-		createLabel("Wed",Color.black,xOffsets[3],50);
-		createLabel("Thu",Color.black,xOffsets[4],50);
-		createLabel("Fri",Color.black,xOffsets[5],50);
-		createLabel("Sat",Color.blue,xOffsets[6],50);
 
-		//myCalendar.set(Calendar.DATE, 1);
-		//int firstDayOfWeek = myCalendar.get(Calendar.DAY_OF_WEEK) - 1;
-		//createLabel("1",Color.black,xOffsets[firstDayOfWeek],50);
+		createLabel(year + " / " + month,Color.black,xOffsets[0],yOffsets[0]);
+		createLabel("Sun",Color.red,xOffsets[0],yOffsets[1]);
+		createLabel("Mon",Color.black,xOffsets[1],yOffsets[1]);
+		createLabel("Tue",Color.black,xOffsets[2],yOffsets[1]);
+		createLabel("Wed",Color.black,xOffsets[3],yOffsets[1]);
+		createLabel("Thu",Color.black,xOffsets[4],yOffsets[1]);
+		createLabel("Fri",Color.black,xOffsets[5],yOffsets[1]);
+		createLabel("Sat",Color.blue,xOffsets[6],yOffsets[1]);
 
+
+
+		// カレンダーを1日に初期化
 		myCalendar.set(Calendar.DATE, 1);
 		int xLine = myCalendar.get(Calendar.DAY_OF_WEEK) - 1;
-		int yLine = 0;
+		int yLine = 2;
 
+		//各日を描画
 		for(int i=1;i<=days;i++){
 			if(i==day){
-				createLabel(i+"", Color.yellow, xOffsets[xLine], yOffsets[yLine]);
+				// 今日のとき
+				createLabel(i+"", Color.orange, xOffsets[xLine], yOffsets[yLine]);
 			}else{
+				// 今日でない日のとき
 				createLabel(i+"", Color.black, xOffsets[xLine], yOffsets[yLine]);
 			}
 
@@ -199,8 +204,85 @@ public class mainFrame extends JFrame
 				yLine++;
 			}
 		}
+
+		//白い箱の表示
+		JLabel calendarBox = new JLabel();
+		calendarBox.setOpaque(true);
+		calendarBox.setBackground(new Color(255,255,255,125));
+		calendarBox.setBounds(xBaseOffset,yBaseOffset,240,250);
+		contentPane.add(calendarBox);
 	}
 
+
+	//翌月のカレンダーを表示
+	private void dispCalendarNext(int xBaseOffset,int yBaseOffset){
+
+		Calendar myCalendar = Calendar.getInstance();
+
+		// 現在日時
+		int year = myCalendar.get(Calendar.YEAR);	//年
+		int month = myCalendar.get(Calendar.MONTH) + 1;	//月
+		int days = myCalendar.getActualMaximum(Calendar.DAY_OF_MONTH);//月の日数
+
+		// カレンダーを翌月に設定
+		if(myCalendar.get(Calendar.MONTH) == 11){
+			myCalendar.set(Calendar.YEAR , year + 1);
+			myCalendar.set(Calendar.MONTH, 0);
+		}else{
+			myCalendar.set(Calendar.MONTH, myCalendar.get(Calendar.MONTH) + 1);
+		}
+		year = myCalendar.get(Calendar.YEAR);
+		month = myCalendar.get(Calendar.MONTH) + 1;
+
+		// 各列ごとのX座標
+		int[] xOffsets = {20,50,80,110,140,170,200};
+		for(int j=0;j<xOffsets.length;j++){
+			xOffsets[j] += xBaseOffset;
+		}
+		// 各行ごとのY座標
+		int[] yOffsets = {10,40,70,100,130,160,190,220};
+		for(int j=0;j<yOffsets.length;j++){
+			yOffsets[j] += yBaseOffset;
+		}
+
+
+		createLabel(year + " / " + month,Color.black,xOffsets[0],yOffsets[0]);
+		createLabel("Sun",Color.red,xOffsets[0],yOffsets[1]);
+		createLabel("Mon",Color.black,xOffsets[1],yOffsets[1]);
+		createLabel("Tue",Color.black,xOffsets[2],yOffsets[1]);
+		createLabel("Wed",Color.black,xOffsets[3],yOffsets[1]);
+		createLabel("Thu",Color.black,xOffsets[4],yOffsets[1]);
+		createLabel("Fri",Color.black,xOffsets[5],yOffsets[1]);
+		createLabel("Sat",Color.blue,xOffsets[6],yOffsets[1]);
+
+
+
+		// カレンダーを1日に初期化
+		myCalendar.set(Calendar.DATE, 1);
+		int xLine = myCalendar.get(Calendar.DAY_OF_WEEK) - 1;
+		int yLine = 2;
+
+		//各日を描画
+		for(int i=1;i<=days;i++){
+
+			createLabel(i+"", Color.black, xOffsets[xLine], yOffsets[yLine]);
+
+			xLine++;
+			if(xLine>6){
+				xLine = 0;
+				yLine++;
+			}
+		}
+
+		//白い箱の表示
+		JLabel calendarBox = new JLabel();
+		calendarBox.setOpaque(true);
+		calendarBox.setBackground(new Color(255,255,255,125));
+		calendarBox.setBounds(xBaseOffset,yBaseOffset,240,250);
+		contentPane.add(calendarBox);
+	}
+
+	// 所定の色でラベルを作成
 	private void createLabel(String message,Color stringColor,int x,int y){
 		JLabel myLabel = new JLabel(message);
 		myLabel.setFont(new Font("Arial", Font.PLAIN, 12));
