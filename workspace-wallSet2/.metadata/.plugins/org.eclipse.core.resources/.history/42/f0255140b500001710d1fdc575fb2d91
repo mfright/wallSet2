@@ -1,0 +1,78 @@
+package jp.ddhost.wallset2;
+
+import java.awt.EventQueue;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+
+public class mainWindow {
+
+	private JFrame frame;
+
+	private static String imagePath = "wallpaper.jpg";
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+
+
+		//EventQueue.invokeLater(new Runnable() {
+		//	public void run() {
+				try {
+
+					//フレームを作成
+					mainWindow window = new mainWindow();
+					window.frame.setVisible(true);
+
+					//壁紙画像パスの指定
+					if(args.length > 0){
+						imagePath = args[0];
+					}
+
+
+
+					//画像表示用J
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			//}
+		//});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public mainWindow() {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 450, 300);
+
+
+		//フレームを選択不可にする
+		frame.setFocusableWindowState(false);
+
+		//フレームを閉じた時、アプリケーションを終了
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		//フレームの枠を外す
+		frame.setUndecorated(true);
+
+		//最背面に配置する
+		frame.toBack();
+
+		//画像表示用ImageIconを作成
+		ImageIcon icon1 = new ImageIcon(imagePath);
+
+		//読み込んだ画像のサイズ
+		System.out.println(icon1.getIconHeight()+ " " + icon1.getIconWidth());
+	}
+
+}
